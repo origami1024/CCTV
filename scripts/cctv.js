@@ -2,7 +2,7 @@
 
 var canva = document.createElement('canvas');
 var ctx = canva.getContext('2d');
-canva.width = 160;
+canva.width = 130;
 canva.height = 60;
 modalControlWrapper.appendChild(canva);
 
@@ -10,29 +10,34 @@ var MEDIA_ELEMENT_NODES = new WeakMap();
 
 var an = {};
 var AudioContext = window.AudioContext;
-    an.context = new AudioContext();
-    an.node = an.context.createScriptProcessor(2048, 1, 1);
-    an.analyser = an.context.createAnalyser();
-    an.analyser.smoothingTimeConstant = 0.3;
-    an.analyser.fftSize = 512;
-    //an.bands = new Uint8Array(an.analyser.frequencyBinCount);
-    an.bands = new Uint8Array(an.analyser.frequencyBinCount);
+an.context = new AudioContext();
+an.node = an.context.createScriptProcessor(2048, 1, 1);
+an.analyser = an.context.createAnalyser();
+an.analyser.smoothingTimeConstant = 0.3;
+an.analyser.fftSize = 512;
+an.bands = new Uint8Array(an.analyser.frequencyBinCount);
 
 var bandsTmp = [];
 ctx.strokeStyle = "black";
 var draw = function () {
-    if (bandsTmp!=undefined) {
+    if (an.bands!=undefined) {
         ctx.beginPath();
         ctx.clearRect(0, 0, canva.width, canva.height);
         for (var i = 0; i < 41; i++) {
-            ctx.rect(i*3,60,3, - bandsTmp[i]/5); 
+            ctx.rect(i*3,60,3, - an.bands[i]/5); 
         }
         ctx.stroke();
     }
 }
 var bandPainterTimer;
 
-
+function blurAway() {
+    setTimeout(function() {
+        hamburger_cb.checked = false;
+        }, 50);
+    
+}
+hamburger_cb.addEventListener("blur", blurAway);
 
 //modal stuff
 btnModalClose.addEventListener("click", modalClose);
@@ -55,12 +60,17 @@ function modalClose(e) {
     tmpVid.style.border = "2px solid #F7F7F7";
     tmpVid.style.margin = "10px";
     views.appendChild(tmpVid);
-    tmpVid.play();
+    
     audioSwitch.checked = false;
     tmpVid.muted = true;
     clearInterval(bandPainterTimer);
     tmpVid.addEventListener("click", showModal);
     //tmpVid.removeEventListener('canplay', soundProc);
+    
+    tmpVid.play();
+    ctx.beginPath();
+    ctx.clearRect(0, 0, canva.width, canva.height);
+
     
 }
 
@@ -106,20 +116,15 @@ function soundProc() {
     } else {
     an.source = an.context.createMediaElementSource(tmpVid);
     MEDIA_ELEMENT_NODES.set(tmpVid,an.source);
-    }
-
-
+    
     an.source.connect(an.analyser);
     an.analyser.connect(an.node);
-    an.audio = tmpVid;
     an.node.connect(an.context.destination);
     an.source.connect(an.context.destination);
+    }
     an.node.onaudioprocess = function () {
-        try {
-            an.analyser.getByteFrequencyData(an.bands);
-            }
-        catch(err) {console.log(err + "(");}
-        if (!an.audio.paused) {
+        an.analyser.getByteFrequencyData(an.bands);
+        if (!tmpVid.paused) {
             bandsTmp = an.bands;
         }
     };

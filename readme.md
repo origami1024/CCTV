@@ -7,8 +7,9 @@
 8) hastable
 
 
-9) block bg scroll
 10)dont stream all when on modalShow ???
-11)there is some lag in streaming 3 at once it seems
-12)CORS errors
+11)there are some lags in streaming 3 at once
+12)CORS errors??
 13)responsive
+
+14)js read on
