@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width">
+	<link rel="stylesheet" href="cctv.css">
+	<title>Видеонаблюдение</title>
+</head>
+<body>
+	<header id="header">
+		<input id="hamburger_cb" type="checkbox"/>
+		<ul id="menu">
+			<li><a class="nav_link" href="newsfeed.html">События</a></li>
+			<li><a class="nav_link" href="briefing.html">Сводка</a></li>
+			<li><a class="nav_link nav_current" href="#">Устройства</a></li>
+			<li><a class="nav_link" href="#">Сценарии</a></li>
+		</ul>
+	</header>
+	<main id="main">
+		<div id="views">
+			<video id="video-1" style ="order:0" crossorigin="anonymous" class="video" muted autoplay></video>
+			<video id="video-2" style ="order:1" crossorigin="anonymous" class="video" muted autoplay></video>
+			<video id="video-3" style ="order:2" crossorigin="anonymous" class="video" muted autoplay ></video>
+		</div>
+
+	</main>
+	<footer id="footer">
+		<ul>
+			<li><a class="nav_link_footer" href="#">Помощь</a></li>
+			<li><a class="nav_link_footer" href="#">Обратная связь</a></li>
+			<li><a class="nav_link_footer" href="#">Разработчикам</a></li>
+			<li><a class="nav_link_footer" href="#">Условия использования</a></li>
+		</ul>		
+	</footer>
+
+	<div id="modal">
+		<div id="modal_content" class ="animateModalIn">
+			<div id="modalVidWrapper">
+			</div>
+			<div id="modalControlWrapper">
+				<input id="btnModalClose" type="button" value="Все камеры">
+				
+				<div id="brContrWrapper">
+					<div>
+						<input type="range" id="bright" max="700" min="0" value="100">
+						<label id="brightLabel" for="bright">Яркость 1.00</label>
+					</div>
+					<div>
+						
+						<input type="range" id="contrast" max="700" min="0" value="100">
+						<label id="contrastLabel" for="contrast">Контраст 1.00</label>
+					</div>
+				</div>
+				<input id="audioSwitch" type="checkbox" uncheked>
+				<label for="audioSwitch">Звук</label>
+			</div>
+			
+			
+		</div>
+	</div>
+
+
+
+	<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+	<script src="scripts/cctv.js"></script>
+	<script>
+
+		//!!!!!!!!!!!!!!!!
+		function initVideo(video, url) {
+	    if (Hls.isSupported()) {
+	        var hls = new Hls();
+	        //hls.crossOrigin = 'null';
+	        hls.loadSource(url);
+	        
+	        //alert(hls.autoLevelEnabled);// = false;
+	        hls.attachMedia(video);
+
+	        hls.on(Hls.Events.MANIFEST_PARSED, function () {
+	            video.play();
+	        	});
+			//console.log(hls.audioTracks);
+	    	} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+	        video.src = url;
+	        video.addEventListener('loadedmetadata', function () {
+	            video.play();
+	        	});
+	    	}
+		}
+		//!!!!!!!!!!!!!!!!
+    initVideo(
+        document.getElementById('video-1'),
+        'http://localhost:9191/master?url=http%3A%2F%2Flocalhost%3A3102%2Fstreams%2Fsosed%2Fmaster.m3u8'
+    );
+    initVideo(
+        document.getElementById('video-2'),
+        'http://localhost:9191/master?url=http%3A%2F%2Flocalhost%3A3102%2Fstreams%2Fcat%2Fmaster.m3u8'
+    );
+    initVideo(
+        document.getElementById('video-3'),
+        'http://localhost:9191/master?url=http%3A%2F%2Flocalhost%3A3102%2Fstreams%2Fdog%2Fmaster.m3u8'
+    );
+    /*initVideo(
+        document.getElementById('video-1'),
+        'http://localhost:3102/streams/sosed/master.m3u8'
+    );
+    initVideo(
+        document.getElementById('video-2'),
+        'http://localhost:3102/streams/cat/master.m3u8'
+    );
+    initVideo(
+        document.getElementById('video-3'),
+        'http://localhost:3102/streams/dog/master.m3u8'
+    );*/
+	</script>
+
+</body>
+</html>
