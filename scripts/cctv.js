@@ -231,13 +231,13 @@ function modalDraw() {
         if (PrevFrame.data.length == CurFrame.data.length) {
             differences = [];
             for (var i = 0; i < (CurFrame.data.length / 4); i++) {
-                let rc = CurFrame.data[i * 4 + 0];
-                let gc = CurFrame.data[i * 4 + 1];
-                let bc = CurFrame.data[i * 4 + 2];
-                let rp = PrevFrame.data[i * 4 + 0];
-                let gp = PrevFrame.data[i * 4 + 1];
-                let bp = PrevFrame.data[i * 4 + 2];
-                if (((rc - rp)>-13) && ((rc - rp)<13) && ((gc - gp)>-13) && ((gc - gp)<13) && ((bc - bp)>-13) && ((bc - bp)<13) ) {
+                var rcur = CurFrame.data[i * 4 + 0];
+                var gcur = CurFrame.data[i * 4 + 1];
+                var bcur = CurFrame.data[i * 4 + 2];
+                var rpre = PrevFrame.data[i * 4 + 0];
+                var gpre = PrevFrame.data[i * 4 + 1];
+                var bpre = PrevFrame.data[i * 4 + 2];
+                if (((rcur - rpre)>-13) && ((rcur - rpre)<13) && ((gcur - gpre)>-13) && ((gcur - gpre)<13) && ((bcur - bpre)>-13) && ((bcur - bpre)<13) ) {
                     //no movement
                 } else {
                     differences.push(i);
@@ -248,7 +248,7 @@ function modalDraw() {
                     mVCtx.putImageData(PrevFrame, 0, 0); */          
                 }
             }
-            let boxes = [];
+            var boxes = [];
             if (differences.length<1600) {
                 for (var i = 0; i < differences.length; i++) {
                     var newGroup = true;
@@ -275,7 +275,7 @@ function modalDraw() {
                     }
                     
                 }
-                boxes = boxes.filter(x => x[2]>4);
+                boxes = boxes.filter(function (x) {return x[2]>5;});
                 for (var f = 0; f < boxes.length; f++) {
                     mVCtx.beginPath();
                     mVCtx.strokeRect(boxes[f][0][0],boxes[f][0][1],boxes[f][1][0] - boxes[f][0][0],boxes[f][1][1] - boxes[f][0][1]);
