@@ -38,26 +38,28 @@
 			<div id="modalVidWrapper">
 			</div>
 			<div id="modalControlWrapper">
-				<input id="btnModalClose" type="button" value="Все камеры">
+				<input id="btnModalClose" class="btns" type="button" value="Все камеры">
 				
 				<div id="brContrWrapper">
 					<div>
-						<input type="range" id="bright" max="700" min="0" value="100">
+						<input class="slider" type="range" id="bright" max="700" min="0" value="100">
 						<label id="brightLabel" for="bright">Яркость 1.0</label>
 						
 					</div>
 					<div>
-						<input type="range" id="contrast" max="700" min="0" value="100">
+						<input class="slider" type="range" id="contrast" max="700" min="0" value="100">
 						<label id="contrastLabel" for="contrast">Контраст 1.0</label>
 						
 					</div>
 				</div>
-				<input id="audioSwitch" type="checkbox" uncheked>
-				<label for="audioSwitch">Звук</label>
-				<input type="checkbox" id="light" uncheked>
-				<label id="lightLab" for="light">Освещенность</label>
-				<input type="checkbox" id="move" uncheked>
-				<label for="move">Движ</label>
+				<div style="height: 200px">
+					<input id="audioSwitch" type="checkbox" uncheked>
+					<label for="audioSwitch">Звук</label>
+					<input type="checkbox" id="light" uncheked>
+					<label id="lightLab" for="light">Освещенность</label>
+					<input type="checkbox" id="move" uncheked>
+					<label for="move">Движ</label>
+				</div>
 			</div>
 			
 			

@@ -204,7 +204,7 @@ function modalDraw() {
     PrevFrame = CurFrame;
     //curCanv.ctx.drawImage(tmpVid, 0, 0, tmpVid.videoWidth, tmpVid.videoHeight);
     modalVidCanvas.width = modalVidWrapper.offsetWidth;//vidRect.right - vidRect.left;//"100%";
-    modalVidCanvas.height = modalVidWrapper.offsetHeight;
+    modalVidCanvas.height = modalVidWrapper.offsetHeight - 4;
     tmpWidth = modalVidCanvas.width;//globalModalVid.videoWidth/4;
     tmpHeight = modalVidCanvas.height;//globalModalVid.videoHeight/4;
     mVCtx.drawImage(globalModalVid, 0, 0, tmpWidth, tmpHeight);
