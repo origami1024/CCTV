@@ -28,25 +28,22 @@ an.analyser.fftSize = 512;
 an.bands = new Uint8Array(an.analyser.frequencyBinCount);
 
 var bandsTmp = [];
-ctx.strokeStyle = "black";
-var draw = function () {
+mVCtx.strokeStyle = "black";
+var drawAnalyzer = function () {
     if (an.bands!=undefined) {
-        ctx.beginPath();
-        ctx.clearRect(0, 0, canva.width, canva.height);
+        mVCtx.beginPath();
+        //ctx.clearRect(0, 0, canva.width, canva.height);
         for (var i = 0; i < 41; i++) {
-            ctx.rect(i*3,60,3, - an.bands[i]/5); 
-            
+            mVCtx.strokeRect((modalVidCanvas.width / 2) - 80 + i*4,modalVidCanvas.height,4, - an.bands[i]/4); 
         }
-        ctx.stroke();
+        mVCtx.stroke();
     }
 }
-var bandPainterTimer;
 
 function blurAway() {
     setTimeout(function() {
         hamburger_cb.checked = false;
         }, 50);
-    
 }
 hamburger_cb.addEventListener("blur", blurAway);
 
@@ -66,12 +63,12 @@ function modalClose(e) {
     modal_content.style.display = "none";
     audioSwitch.checked = false;
     globalModalVid.muted = true;
-    clearInterval(bandPainterTimer);
-    ctx.beginPath();
+    //clearInterval(bandPainterTimer);
     ctx.clearRect(0, 0, canva.width, canva.height);
     move.checked = false;
+    light.checked = false;
     clearInterval(modalDrawTimer);
-
+    lightLab.textContent = "Освещенность";
 }
 
 var globalModalVid;
@@ -103,8 +100,6 @@ function showModal(currentX) {
 ////
 function soundProc() {
     an.context = an.context || new AudioContext();
-    //var tmpVid = modalVidWrapper.getElementsByClassName("video")[0];
-
     if (MEDIA_ELEMENT_NODES.has(globalModalVid)) {
         an.source = MEDIA_ELEMENT_NODES.get(globalModalVid);
     } else {
@@ -118,9 +113,6 @@ function soundProc() {
 
     an.node.onaudioprocess = function () {
         an.analyser.getByteFrequencyData(an.bands);
-        /*if (!globalModalVid.paused) {
-            bandsTmp = an.bands;
-        }*/ //DURP!
     };
 };
 ////
@@ -147,15 +139,14 @@ function contrastChange(e) {
 
 
 audioSwitch.addEventListener("change", audioC);
-
 function audioC(e) {
     globalModalVid.muted = !audioSwitch.checked;
-    if (audioSwitch.checked == true) {
+    /*if (audioSwitch.checked == true) {
     bandPainterTimer = setInterval(draw,35);
     } else {
         clearInterval(bandPainterTimer);
-    }
-}
+    }*/
+}//moved that into general modal drawer
 
 
 
@@ -202,6 +193,10 @@ CurFrame.data = [];
 var differences = [];
 var modalDrawTimer;
 
+var lightCanv = document.createElement('canvas');
+var lightCtx = lightCanv.getContext('2d');
+modalControlWrapper.appendChild(lightCanv);
+
 
 function modalDraw() {    
     //modalVidCanvas
@@ -214,8 +209,16 @@ function modalDraw() {
     tmpHeight = modalVidCanvas.height;//globalModalVid.videoHeight/4;
     mVCtx.drawImage(globalModalVid, 0, 0, tmpWidth, tmpHeight);
     
+    if (light.checked) {
+        lightCtx.drawImage(globalModalVid, 0, 0, 1, 1);
+        var imgd = lightCtx.getImageData(0,0,1,1);
+        var pix = imgd.data;
+        lightLab.textContent = "Освещенность " + ((pix[0] + pix[1] + pix[2]) / 7.65).toFixed(0) + "%";
 
-    if (move.checked == true) {
+    }
+
+    if (audioSwitch.checked) {drawAnalyzer();}
+    if (move.checked) {
         mVCtx.strokeStyle = "green";
         mVCtx.lineWidth = 5;
         CurFrame.width = tmpWidth / 4;
@@ -226,9 +229,8 @@ function modalDraw() {
         CurFrame = scaledCtx.getImageData(0, 0, CurFrame.width, CurFrame.height);
         //сверить по пикселям и записать различные в массив
         if (PrevFrame.data.length == CurFrame.data.length) {
-            var l = CurFrame.data.length / 4;
             differences = [];
-            for (var i = 0; i < l; i++) {
+            for (var i = 0; i < (CurFrame.data.length / 4); i++) {
                 let rc = CurFrame.data[i * 4 + 0];
                 let gc = CurFrame.data[i * 4 + 1];
                 let bc = CurFrame.data[i * 4 + 2];
@@ -239,6 +241,7 @@ function modalDraw() {
                     //no movement
                 } else {
                     differences.push(i);
+                    if (differences.length>1600) {break;}
                     /*PrevFrame.data[i * 4 + 0] = 255;
                     PrevFrame.data[i * 4 + 1] = 0;
                     PrevFrame.data[i * 4 + 2] = 0;
@@ -274,14 +277,9 @@ function modalDraw() {
                 }
                 boxes = boxes.filter(x => x[2]>4);
                 for (var f = 0; f < boxes.length; f++) {
-                    
                     mVCtx.beginPath();
-                    //tmpVid.canvas.getContext('2d').beginPath();
                     mVCtx.strokeRect(boxes[f][0][0],boxes[f][0][1],boxes[f][1][0] - boxes[f][0][0],boxes[f][1][1] - boxes[f][0][1]);
-                    //tmpVid.canvas.getContext('2d').strokeRect(boxes[f][0][0],boxes[f][0][1],boxes[f][1][0] - boxes[f][0][0],boxes[f][1][1] - boxes[f][0][1]);
                     mVCtx.stroke();
-
-                    //tmpVid.canvas.getContext('2d').stroke;
                 }
                 
             }
